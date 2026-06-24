@@ -1,0 +1,8 @@
+{
+  "name": "Remix: 기관 전거관리 시스템 (ACS)",
+  "description": "기관 소속 연구자 식별 데이터 통합, 검증 및 전거 관리(Authority Control)를 위한 전문 관리자 콘솔 및 연구자 포털",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
