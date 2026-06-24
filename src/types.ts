@@ -52,3 +52,34 @@ export interface MergeRecordData {
   scopusId?: string;
   uuid: string;
 }
+
+export interface SupabaseResearcherName {
+  variant_name: string;
+  name_type: string;
+}
+
+export interface SupabaseResearcherId {
+  id_type: string;
+  id_value: string;
+  is_verified: boolean;
+}
+
+export interface SupabaseResearcher {
+  id: string;
+  employee_id: string;
+  name_ko: string;
+  name_en_official: string;
+  birth_year: number | null;
+  email_official: string;
+  department_current: string;
+  position_current: string | null;
+  employment_status: string;
+  join_date: string | null;
+  retirement_date: string | null;
+  research_keywords: string[];
+  website_url: string | null;
+  created_at: string;
+  updated_at: string;
+  researcher_names: SupabaseResearcherName[];
+  researcher_ids: SupabaseResearcherId[];
+}

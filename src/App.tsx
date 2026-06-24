@@ -1,13 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ViewTab, RoleMode, UrgentTask, ActivityLog, ResearcherRecord, NameVariant } from './types';
 import { 
   initialUrgentTasks, 
   initialActivityLogs, 
-  initialResearchers, 
   initialPortalVariants, 
   workbenchRecordA, 
   workbenchRecordB 
 } from './mockData';
+import { supabase } from './lib/supabase';
 
 import { Sidebar } from './components/Sidebar';
 import { Header } from './components/Header';
@@ -27,8 +27,42 @@ export default function App() {
   // Application State
   const [urgentTasks, setUrgentTasks] = useState<UrgentTask[]>(initialUrgentTasks);
   const [activityLogs, setActivityLogs] = useState<ActivityLog[]>(initialActivityLogs);
-  const [researchers, setResearchers] = useState<ResearcherRecord[]>(initialResearchers);
+  const [researchers, setResearchers] = useState<ResearcherRecord[]>([]);
   const [portalVariants, setPortalVariants] = useState<NameVariant[]>(initialPortalVariants);
+
+  // Fetch real data from Supabase
+  useEffect(() => {
+    const loadData = async () => {
+      const { data, error } = await supabase
+        .from('researchers')
+        .select('*, researcher_names(*), researcher_ids(*)');
+      
+      if (data && !error) {
+        const mapped: ResearcherRecord[] = data.map((r: any) => {
+          const externalIds: any = {};
+          r.researcher_ids?.forEach((idObj: any) => {
+            const key = idObj.id_type.toLowerCase();
+            externalIds[key] = idObj.id_value;
+          });
+          
+          return {
+            id: r.id,
+            empId: r.employee_id,
+            officialName: `${r.name_ko} (${r.name_en_official})`,
+            dept: r.department_current,
+            variantsCount: r.researcher_names?.length || 0,
+            externalIds,
+            verificationStatus: r.researcher_ids?.some((i: any) => i.is_verified) ? 'VERIFIED' : 'PENDING',
+            tenureStatus: r.employment_status === 'active' ? '정규직(Tenured)' : '계약직(Contract)',
+            lastUpdated: new Date(r.updated_at).toISOString().slice(0, 10),
+            keywords: r.research_keywords || []
+          };
+        });
+        setResearchers(mapped);
+      }
+    };
+    loadData();
+  }, []);
 
   // Handler: Role Mode change
   const handleRoleModeChange = (newMode: RoleMode) => {
@@ -129,6 +163,7 @@ export default function App() {
             onRejectTask={handleRejectTask}
             activityLogs={activityLogs}
             onNavigateTab={setCurrentTab}
+            totalResearchers={researchers.length}
           />
         );
       case 'workbench':

@@ -9,6 +9,7 @@ interface DashboardViewProps {
   onRejectTask: (taskId: string) => void;
   activityLogs: ActivityLog[];
   onNavigateTab: (tab: ViewTab) => void;
+  totalResearchers: number;
 }
 
 export const DashboardView: React.FC<DashboardViewProps> = ({
@@ -16,7 +17,8 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
   onApproveTask,
   onRejectTask,
   activityLogs,
-  onNavigateTab
+  onNavigateTab,
+  totalResearchers
 }) => {
   const [showInsightNotice, setShowInsightNotice] = useState(true);
 
@@ -33,7 +35,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
             </div>
           </div>
           <div className="flex items-baseline gap-2">
-            <span className="text-3xl font-bold font-mono tracking-tight text-[#121c28]">12,482</span>
+            <span className="text-3xl font-bold font-mono tracking-tight text-[#121c28]">{totalResearchers.toLocaleString()}</span>
             <span className="text-xs font-semibold text-[#006c4a] flex items-center">
               +2.4%
             </span>
